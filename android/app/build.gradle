@@ -43,8 +43,8 @@ android {
             mavenCentral()
         }
         dependencies {
-            classpath 'com.android.tools.build:gradle:7.0.0'  // 既存のGradleプラグイン
-            classpath 'com.google.gms:google-services:4.3.10' // Firebase用
+            classpath 'com.android.tools.build:gradle:7.0.4'  // 既存のGradleプラグイン
+            classpath 'com.google.gms:google-services:4.4.2' // Firebase用
         }
     }
     apply plugin: 'com.google.gms.google-services'
