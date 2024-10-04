@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'acountregister.dart';
+import 'basicinfo.dart';
 
 
 
-void main()async {
+Future<void> main()async {
   runApp(const MyApp());
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(); // Firebaseの初期化
@@ -50,7 +51,7 @@ class FirstScreen extends StatelessWidget {
             // ボタンを押すと次の画面に遷移
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => AccountRegister()),
+              MaterialPageRoute(builder: (context) => BasicInfoForm()),
             );
           },
           child: Text('Googleアカウントで登録'),

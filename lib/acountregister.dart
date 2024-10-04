@@ -1,6 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'basicinfo.dart';
 
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+  runApp(MyApp());
+}
 
 class AccountRegister extends StatefulWidget {
   @override
@@ -12,6 +19,8 @@ class AccountRegister extends StatefulWidget {
     throw UnimplementedError();
   }
 }
+@override
+
 
 class  _AccountRegisterState extends State<AccountRegister> {
   final _emailController = TextEditingController();
