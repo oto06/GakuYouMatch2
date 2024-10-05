@@ -3,32 +3,30 @@ import 'package:firebase_core/firebase_core.dart';
 import 'acountregister.dart';
 import 'basicinfo.dart';
 import 'profile.dart';
+import 'firebase_options.dart';
 
-
-
-Future<void> main()async {
-  runApp(const MyApp());
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(); // Firebaseの初期化
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform,);
   runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
-
-  // widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Registration',
+      title: 'Flutter Firebase Auth',
       theme: ThemeData(
         primarySwatch: Colors.blue,
-
       ),
       home: FirstScreen(),
     );
   }
 }
+
+
+
 
 class FirstScreen extends StatelessWidget {
   @override
@@ -52,7 +50,7 @@ class FirstScreen extends StatelessWidget {
             // ボタンを押すと次の画面に遷移
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => ProfilePage()),
+              MaterialPageRoute(builder: (context) => AccountRegister()),
             );
           },
           child: Text('Googleアカウントで登録'),
