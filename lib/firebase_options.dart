@@ -85,5 +85,4 @@ class DefaultFirebaseOptions {
     storageBucket: 'gakuyoumatch.appspot.com',
     measurementId: 'G-54PS00E7K4',
   );
-
 }

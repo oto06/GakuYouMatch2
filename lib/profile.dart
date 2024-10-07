@@ -3,13 +3,15 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
 void main() {
-  runApp(ProfileApp());
+  runApp(const ProfileApp());
 }
 
 class ProfileApp extends StatelessWidget {
+  const ProfileApp({super.key});
+
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return const MaterialApp(
       title: 'Profile Example',
       home: ProfilePage(),
     );
@@ -17,6 +19,8 @@ class ProfileApp extends StatelessWidget {
 }
 
 class ProfilePage extends StatefulWidget {
+  const ProfilePage({super.key});
+
   @override
   _ProfilePageState createState() => _ProfilePageState();
 }
@@ -42,41 +46,41 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('プロフィール'),
+        title: const Text('プロフィール'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('写真を選択:', style: TextStyle(fontSize: 18)),
-            SizedBox(height: 8),
+            const Text('写真を選択:', style: TextStyle(fontSize: 18)),
+            const SizedBox(height: 8),
             _image == null
-                ? Text('画像が選択されていません。')
+                ? const Text('画像が選択されていません。')
                 : Image.file(_image!, height: 100, width: 100, fit: BoxFit.cover),
             ElevatedButton(
               onPressed: _pickImage,
-              child: Text('写真を選択'),
+              child: const Text('写真を選択'),
             ),
-            SizedBox(height: 16),
-            Text('特技:', style: TextStyle(fontSize: 18)),
+            const SizedBox(height: 16),
+            const Text('特技:', style: TextStyle(fontSize: 18)),
             TextField(
               controller: _skillsController,
-              decoration: InputDecoration(hintText: '特技を入力'),
+              decoration: const InputDecoration(hintText: '特技を入力'),
             ),
-            SizedBox(height: 16),
-            Text('趣味:', style: TextStyle(fontSize: 18)),
+            const SizedBox(height: 16),
+            const Text('趣味:', style: TextStyle(fontSize: 18)),
             TextField(
               controller: _hobbiesController,
-              decoration: InputDecoration(hintText: '趣味を入力'),
+              decoration: const InputDecoration(hintText: '趣味を入力'),
             ),
-            SizedBox(height: 16),
-            Text('その他:', style: TextStyle(fontSize: 18)),
+            const SizedBox(height: 16),
+            const Text('その他:', style: TextStyle(fontSize: 18)),
             TextField(
               controller: _othersController,
-              decoration: InputDecoration(hintText: 'その他の情報を入力'),
+              decoration: const InputDecoration(hintText: 'その他の情報を入力'),
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             ElevatedButton(
               onPressed: () {
                 // 入力されたデータの処理をここに追加
@@ -84,7 +88,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 print('趣味: ${_hobbiesController.text}');
                 print('その他: ${_othersController.text}');
               },
-              child: Text('保存'),
+              child: const Text('保存'),
             ),
           ],
         ),
