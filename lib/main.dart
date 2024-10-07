@@ -36,7 +36,7 @@ class FirstScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title:Text ('First Screen'),
+        //title:Text ('First Screen'),
       ),
       body: Center(
         child: Column( // Column で複数のウィジェットをまとめる
