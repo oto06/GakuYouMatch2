@@ -2,39 +2,41 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'acountregister.dart';
 import 'basicinfo.dart';
-import'firebase_options.dart';
+import 'profile.dart';
+import 'map search.dart';
 
-Future<void> main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform,);
+
+
+Future<void> main()async {
   runApp(const MyApp());
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(); // Firebaseの初期化
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
+
+  // widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Firebase Auth',
+      title: 'Flutter Registration',
       theme: ThemeData(
         primarySwatch: Colors.blue,
+
       ),
-      home: const FirstScreen(),
+      home: FirstScreen(),
     );
   }
 }
 
-
-
-
 class FirstScreen extends StatelessWidget {
-  const FirstScreen({super.key});
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title:const Text ('First Screen'),
+        title:Text ('First Screen'),
       ),
       body: Center(
         child: Column( // Column で複数のウィジェットをまとめる
@@ -45,27 +47,27 @@ class FirstScreen extends StatelessWidget {
           '新規登録',
           style: TextStyle(fontSize: 40, fontWeight: FontWeight.bold),
         ),
-        const SizedBox(height: 30), // ボタンとテキストの間にスペースを追加
+        SizedBox(height: 30), // ボタンとテキストの間にスペースを追加
         ElevatedButton(
           onPressed: () {
             // ボタンを押すと次の画面に遷移
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => const AccountRegister()),
+              MaterialPageRoute(builder: (context) => BasicInfoForm()),
             );
           },
-          child: const Text('Googleアカウントで登録'),
+          child: Text('Googleアカウントで登録'),
        ),
-          const SizedBox(height: 20), // ボタンの間にスペースを追加
+          SizedBox(height: 20), // ボタンの間にスペースを追加
           ElevatedButton(
             onPressed: () {
               // 2つ目のボタンを押すと次の画面に遷移
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => const BasicInfoForm()), // 遷移先を変更することも可能
+                MaterialPageRoute(builder: (context) => MapSearch()), // 遷移先を変更することも可能
               );
             },
-            child: const Text('Appleアカウントで登録'), // ボタンのテキストを変更
+            child: Text('Appleアカウントで登録'), // ボタンのテキストを変更
            ),
           ],
         ),

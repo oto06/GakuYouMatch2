@@ -33,6 +33,10 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+
+  # Google Mapsパッケージを追加
+  google_maps_flutter: ^2.9.0
+
   image_picker: ^1.1.2
   intl: ^0.17.0
   firebase_core: "^3.6.0"
