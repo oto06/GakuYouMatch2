@@ -64,7 +64,7 @@ class FirstScreen extends StatelessWidget {
               // 2つ目のボタンを押すと次の画面に遷移
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => MapSearch()), // 遷移先を変更することも可能
+                MaterialPageRoute(builder: (context) => BasicInfoForm()), // 遷移先を変更することも可能
               );
             },
             child: Text('Appleアカウントで登録'), // ボタンのテキストを変更
