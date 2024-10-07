@@ -6,10 +6,12 @@ import 'basicinfo.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class AccountRegister extends StatefulWidget {
+  const AccountRegister({super.key});
+
   @override
   _AccountRegisterState createState() => _AccountRegisterState();
 
@@ -49,7 +51,7 @@ class  _AccountRegisterState extends State<AccountRegister> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Account Register'), // アプリバーのタイトル
+        title: const Text('Account Register'), // アプリバーのタイトル
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -57,17 +59,17 @@ class  _AccountRegisterState extends State<AccountRegister> {
           children: [
             TextField(
               controller: _emailController,
-              decoration: InputDecoration(labelText: 'Email'), // メールフィールド
+              decoration: const InputDecoration(labelText: 'Email'), // メールフィールド
             ),
             TextField(
               controller: _passwordController,
-              decoration: InputDecoration(labelText: 'Password'), // パスワードフィールド
+              decoration: const InputDecoration(labelText: 'Password'), // パスワードフィールド
               obscureText: true, // パスワードを隠す
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             ElevatedButton(
               onPressed: _register, // 登録ボタンを押すと_registerメソッドを呼ぶ
-              child: Text('Register'),
+              child: const Text('Register'),
 
             ),
           ],

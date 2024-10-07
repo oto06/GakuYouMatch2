@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';  // 日付フォーマット用
 
 void main() {
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -13,12 +15,14 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: BasicInfoForm(),
+      home: const BasicInfoForm(),
     );
   }
 }
 
 class BasicInfoForm extends StatefulWidget {
+  const BasicInfoForm({super.key});
+
   @override
   _BasicInfoFormState createState() => _BasicInfoFormState();
 }
@@ -52,31 +56,31 @@ class _BasicInfoFormState extends State<BasicInfoForm> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('基本情報フォーム'),
+        title: const Text('基本情報フォーム'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Text(
+            const Text(
               '基本情報',
               style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
 
             // ニックネーム入力フィールド
             TextField(
               controller: nicknameController,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: 'ニックネーム',
                 border: OutlineInputBorder(),
               ),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
 
             // 性別選択
-            Text(
+            const Text(
               '性別',
               style: TextStyle(fontSize: 16),
             ),
@@ -88,23 +92,23 @@ class _BasicInfoFormState extends State<BasicInfoForm> {
                   child: Text(value),
                 );
               }).toList(),
-              hint: Text('性別を選択'),
+              hint: const Text('性別を選択'),
               onChanged: (String? newValue) {
                 setState(() {
                   _gender = newValue;
                 });
               },
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
 
             // 生年月日入力フィールド
             TextField(
               controller: birthdateController,
               decoration: InputDecoration(
                 labelText: '生年月日',
-                border: OutlineInputBorder(),
+                border: const OutlineInputBorder(),
                 suffixIcon: IconButton(
-                  icon: Icon(Icons.calendar_today),
+                  icon: const Icon(Icons.calendar_today),
                   onPressed: () {
                     _selectDate(context);
                   },
@@ -112,17 +116,17 @@ class _BasicInfoFormState extends State<BasicInfoForm> {
               ),
               readOnly: true, // ユーザーはテキストを直接編集できない
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
 
             // 居住地入力フィールド
             TextField(
               controller: locationController,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: '居住地',
                 border: OutlineInputBorder(),
               ),
             ),
-            SizedBox(height: 40),
+            const SizedBox(height: 40),
 
             // 確認用ボタン（送信など）
             Center(
@@ -134,7 +138,7 @@ class _BasicInfoFormState extends State<BasicInfoForm> {
                   print('生年月日: ${birthdateController.text}');
                   print('居住地: ${locationController.text}');
                 },
-                child: Text('送信'),
+                child: const Text('送信'),
               ),
             ),
           ],
