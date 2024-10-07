@@ -37,7 +37,11 @@ class  _AccountRegisterState extends State<AccountRegister> {
         password: password,
       );
       // ユーザー登録成功の処理
-      print('User registered: ${userCredential.user?.uid}');
+      print('User registered: ${userCredential.user?.uid}');//登録成功したら次の画面に移行
+      Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => BasicInfoForm()),
+      );
       // 登録成功後の画面遷移などをここで行うことができます
     } catch (e) {
       // エラー処理
@@ -68,6 +72,7 @@ class  _AccountRegisterState extends State<AccountRegister> {
             ElevatedButton(
               onPressed: _register, // 登録ボタンを押すと_registerメソッドを呼ぶ
               child: Text('Register'),
+
 
             ),
           ],

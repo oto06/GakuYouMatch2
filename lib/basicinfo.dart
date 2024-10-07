@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gakuyoumatch2/profile.dart';
 import 'package:intl/intl.dart';  // 日付フォーマット用
 
 void main() {
@@ -47,7 +48,6 @@ class _BasicInfoFormState extends State<BasicInfoForm> {
       });
     }
   }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -139,6 +139,38 @@ class _BasicInfoFormState extends State<BasicInfoForm> {
             ),
           ],
         ),
+      ),
+      bottomNavigationBar: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: ElevatedButton(
+          onPressed: () {
+            // 次の画面に遷移するロジック
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => ProfilePage(),
+              ),
+            );
+          },
+          child: Text('次へ'),
+          style: ElevatedButton.styleFrom(
+            minimumSize: Size(double.infinity, 50), // ボタンの幅を画面いっぱいに
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class NextPage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('次のページ'),
+      ),
+      body: Center(
+        child: Text('これは次のページです！'),
       ),
     );
   }
