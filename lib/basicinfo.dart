@@ -152,14 +152,14 @@ class _BasicInfoFormState extends State<BasicInfoForm> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => ProfilePage(),
+                builder: (context) => const ProfilePage(),
               ),
             );
           },
-          child: Text('次へ'),
           style: ElevatedButton.styleFrom(
-            minimumSize: Size(double.infinity, 50), // ボタンの幅を画面いっぱいに
+            minimumSize: const Size(double.infinity, 50), // ボタンの幅を画面いっぱいに
           ),
+          child: const Text('次へ'),
         ),
       ),
     );
@@ -167,13 +167,15 @@ class _BasicInfoFormState extends State<BasicInfoForm> {
 }
 
 class NextPage extends StatelessWidget {
+  const NextPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('次のページ'),
+        title: const Text('次のページ'),
       ),
-      body: Center(
+      body: const Center(
         child: Text('これは次のページです！'),
       ),
     );

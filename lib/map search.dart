@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class MapSearch extends StatefulWidget {
+  const MapSearch({super.key});
+
   @override
   _MapSearchState createState() => _MapSearchState();
 }
@@ -19,7 +21,7 @@ class _MapSearchState extends State<MapSearch> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('場所検索'),
+        title: const Text('場所検索'),
         backgroundColor: Colors.green[700],
       ),
       body: GoogleMap(

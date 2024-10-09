@@ -42,7 +42,7 @@ class  _AccountRegisterState extends State<AccountRegister> {
       print('User registered: ${userCredential.user?.uid}');//登録成功したら次の画面に移行
       Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => BasicInfoForm()),
+          MaterialPageRoute(builder: (context) => const BasicInfoForm()),
       );
       // 登録成功後の画面遷移などをここで行うことができます
     } catch (e) {
