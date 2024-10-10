@@ -26,7 +26,7 @@ class _MapScreenState extends State<MapScreen> {
   GoogleMapController? mapController;
 
   // 地図の初期位置
-  final LatLng _initialPosition = const LatLng(35.6762, 139.6503); // 東京の座標
+  final LatLng _initialPosition = const LatLng(33.5214, 130.4689); // 福岡大学の座標
 
   // 地図の初期設定
   void _onMapCreated(GoogleMapController controller) {
