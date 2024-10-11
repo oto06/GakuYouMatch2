@@ -55,7 +55,7 @@ class  _AccountRegisterState extends State<AccountRegister> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Account Register'), // アプリバーのタイトル
+        title: const Text('アカウント登録'), // アプリバーのタイトル
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -73,7 +73,7 @@ class  _AccountRegisterState extends State<AccountRegister> {
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: _register, // 登録ボタンを押すと_registerメソッドを呼ぶ
-              child: const Text('Register'),
+              child: const Text('登録'),
 
 
             ),
