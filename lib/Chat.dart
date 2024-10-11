@@ -1,5 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:gakuyoumatch2/calender.dart';
+import 'package:gakuyoumatch2/map%20search.dart';
+import 'package:gakuyoumatch2/map_home.dart';
+import 'package:gakuyoumatch2/profile.dart';
+
+
 
 class ChatScreen extends StatefulWidget {
   @override
@@ -10,6 +16,8 @@ class _ChatScreenState extends State<ChatScreen> {
   final TextEditingController _controller = TextEditingController();
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
+  int _selectedIndex = 1; // 1: メッセージタブ
+
   // メッセージの送信
   void _sendMessage() {
     if (_controller.text.isNotEmpty) {
@@ -18,6 +26,38 @@ class _ChatScreenState extends State<ChatScreen> {
         'timestamp': FieldValue.serverTimestamp(),
       });
       _controller.clear();
+    }
+  }
+  // タブが選択されたときの処理
+  void _onItemTapped(int index) {
+    switch (index) {
+      case 0:
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => MapScreen()),
+        );
+        break;
+      case 1:
+      // すでにメッセージ画面なので何もしない
+        break;
+      case 2:
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => MapSearch()),
+        );
+        break;
+      case 3:
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => CalendarScreen()),
+        );
+        break;
+      case 4:
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => ProfilePage()),
+        );
+        break;
     }
   }
 
@@ -84,6 +124,7 @@ class _ChatScreenState extends State<ChatScreen> {
         selectedItemColor: Colors.blue, // 選択されたアイテムの色を青に設定
         unselectedItemColor: Colors.black, // 未選択のアイテムの色を黒に設定
         type: BottomNavigationBarType.fixed, // 固定型に設定
+        onTap: _onItemTapped, // タップ時の処理を指定
       ),
     );
   }

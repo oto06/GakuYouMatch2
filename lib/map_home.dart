@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:gakuyoumatch2/Chat.dart';
+import 'package:gakuyoumatch2/map%20search.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'calender.dart';
+import 'profile.dart';
 
 void main() => runApp(const MyApp());
 
@@ -20,7 +24,7 @@ class MapScreen extends StatefulWidget {
   @override
   _MapScreenState createState() => _MapScreenState();
 }
-
+int _selectedIndex = 0;
 class _MapScreenState extends State<MapScreen> {
   // GoogleMapControllerを保持するための変数
   GoogleMapController? mapController;
@@ -31,6 +35,38 @@ class _MapScreenState extends State<MapScreen> {
   // 地図の初期設定
   void _onMapCreated(GoogleMapController controller) {
     mapController = controller;
+  }
+
+  void _onItemTapped(int index) {
+    switch (index) {
+      case 0:
+      break;
+      case 1:
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => ChatScreen()),
+        );
+
+        break;
+      case 2:
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => MapSearch()),
+        );
+        break;
+      case 3:
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => CalendarScreen()),
+        );
+        break;
+      case 4:
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => ProfilePage()),
+        );
+        break;
+    }
   }
 
   @override
@@ -57,8 +93,8 @@ class _MapScreenState extends State<MapScreen> {
         selectedItemColor: Colors.blue, // 選択されたアイテムの色を青に設定
         unselectedItemColor: Colors.black, // 未選択のアイテムの色を黒に設定
         type: BottomNavigationBarType.fixed, // 固定型に設定
+        onTap: _onItemTapped, // タップ時の処理を指定
       ),
     );
   }
 }
-

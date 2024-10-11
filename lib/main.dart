@@ -4,6 +4,7 @@ import 'package:gakuyoumatch2/Chat.dart';
 import 'package:gakuyoumatch2/calender.dart';
 import 'basicinfo.dart';
 import 'firebase_options.dart';
+import 'calender.dart';
 
 
 Future<void> main()async {
