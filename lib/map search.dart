@@ -12,7 +12,7 @@ class MapSearch extends StatefulWidget {
 class _MapSearchState extends State<MapSearch> {
   GoogleMapController? mapController;
 
-  final LatLng _center = const LatLng(45.521563, -122.677433);
+  final LatLng _center = const LatLng(33.595409, 130.351911);
 
   void _onMapCreated(GoogleMapController controller) {
     mapController = controller;
