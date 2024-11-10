@@ -36,6 +36,7 @@ dependencies:
 
   # Google Mapsパッケージを追加
   google_maps_flutter: ^2.9.0
+  geocoding: ^3.0.0
 
   image_picker: ^1.1.2
   intl: ^0.17.0
@@ -43,6 +44,7 @@ dependencies:
   firebase_auth: "^5.3.1"
   cloud_firestore: "^5.4.4"
   table_calendar: "^3.0.8"
+  provider: ^6.1.2
 
 
   # The following adds the Cupertino Icons font to your application.

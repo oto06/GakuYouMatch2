@@ -9,6 +9,8 @@ import 'package:gakuyoumatch2/profile.dart';
 
 class ChatScreen extends StatefulWidget {
   @override
+  //final String chatId; // チャットのID
+  //final String chatTitle; // チャットのタイトル（グループ名や個人名）
   _ChatScreenState createState() => _ChatScreenState();
 }
 
@@ -65,14 +67,14 @@ class _ChatScreenState extends State<ChatScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Chat'),
+        title: Text("Chat"),
       ),
       body: Column(
         children: [
           Expanded(
             child: StreamBuilder<QuerySnapshot>(
-              stream: _firestore
-                  .collection('messages')
+              stream: FirebaseFirestore.instance
+                  .collection('Chat')
                   .orderBy('timestamp', descending: true)
                   .snapshots(),
               builder: (context, snapshot) {
