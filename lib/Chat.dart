@@ -15,10 +15,10 @@ class ChatScreen extends StatefulWidget {
 }
 
 class _ChatScreenState extends State<ChatScreen> {
+  int _selectedIndex = 1;
   final TextEditingController _controller = TextEditingController();
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  int _selectedIndex = 1; // 1: メッセージタブ
 
   // メッセージの送信
   void _sendMessage() {
@@ -31,37 +31,7 @@ class _ChatScreenState extends State<ChatScreen> {
     }
   }
   // タブが選択されたときの処理
-  void _onItemTapped(int index) {
-    switch (index) {
-      case 0:
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => MapScreen()),
-        );
-        break;
-      case 1:
-      // すでにメッセージ画面なので何もしない
-        break;
-      case 2:
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => MapSearch()),
-        );
-        break;
-      case 3:
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => CalendarScreen()),
-        );
-        break;
-      case 4:
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => ProfilePage()),
-        );
-        break;
-    }
-  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -115,19 +85,7 @@ class _ChatScreenState extends State<ChatScreen> {
           ),
         ],
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(icon: Icon(Icons.map), label: 'マップ'),
-          BottomNavigationBarItem(icon: Icon(Icons.message), label: 'メッセージ'),
-          BottomNavigationBarItem(icon: Icon(Icons.app_registration), label: '登録'),
-          BottomNavigationBarItem(icon: Icon(Icons.calendar_today), label: 'カレンダー'),
-          BottomNavigationBarItem(icon: Icon(Icons.more_horiz), label: 'その他'),
-        ],
-        selectedItemColor: Colors.blue, // 選択されたアイテムの色を青に設定
-        unselectedItemColor: Colors.black, // 未選択のアイテムの色を黒に設定
-        type: BottomNavigationBarType.fixed, // 固定型に設定
-        onTap: _onItemTapped, // タップ時の処理を指定
-      ),
+
     );
   }
 }

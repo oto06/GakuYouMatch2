@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:gakuyoumatch2/main.dart';
 import 'package:image_picker/image_picker.dart';
 import 'map_home.dart'; // map_home.dart をインポート
 
@@ -99,7 +100,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   // MapHome画面への遷移
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => const MapScreen()),
+                    MaterialPageRoute(builder: (context) => const MyApp()),
                   );
                 },
                 child: const Text('次へ'), // ボタンに「次へ」と表示

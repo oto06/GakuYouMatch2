@@ -2,10 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:gakuyoumatch2/profile.dart';
 import 'package:intl/intl.dart';  // 日付フォーマット用
 
-void main() {
-  runApp(const MyApp());
-}
-
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
