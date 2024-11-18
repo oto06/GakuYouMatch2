@@ -18,7 +18,9 @@ class _MapSearchState extends State<MapSearch> {
   TextEditingController _searchController = TextEditingController();
   TextEditingController _eventTypeController = TextEditingController();
   TextEditingController _eventDetailsController = TextEditingController();
+  TextEditingController _eventDateController = TextEditingController(); // 追加
   LatLng _initialPosition = LatLng(35.6895, 139.6917); // デフォルト位置（例: 東京）
+  DateTime? _selectedDate; // 追加
 
   @override
   Widget build(BuildContext context) {
@@ -74,6 +76,20 @@ class _MapSearchState extends State<MapSearch> {
                 prefixIcon: Icon(Icons.description),
               ),
             ),
+            SizedBox(height: 8),
+
+            // 日付選択フィールド
+            TextField(
+              controller: _eventDateController,
+              decoration: InputDecoration(
+                labelText: '予定日',
+                prefixIcon: Icon(Icons.calendar_today),
+              ),
+              onTap: () {
+                _selectDate(context); // 日付選択を呼び出し
+              },
+              readOnly: true, // テキストフィールドを編集不可にする
+            ),
             SizedBox(height: 16),
 
             // 登録ボタン
@@ -87,13 +103,28 @@ class _MapSearchState extends State<MapSearch> {
     );
   }
 
+  // 日付選択ダイアログを表示
+  void _selectDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2101),
+    );
+    if (picked != null && picked != _selectedDate) {
+      setState(() {
+        _selectedDate = picked;
+        _eventDateController.text = "${picked.year}-${picked.month}-${picked.day}"; // 日付を表示
+      });
+    }
+  }
+
   // 位置を検索してマップを移動
   void _searchLocation(String query) async {
     try {
       // 住所から緯度経度を取得
       List<Location> locations = await locationFromAddress(query);
       if (locations.isNotEmpty) {
-        // 取得した緯度経度に基づいてマップを移動
         final position = LatLng(locations[0].latitude, locations[0].longitude);
         _mapController.animateCamera(
           CameraUpdate.newLatLngZoom(position, 14),
@@ -108,10 +139,11 @@ class _MapSearchState extends State<MapSearch> {
   void _registerEvent() {
     final eventType = _eventTypeController.text;
     final eventDetails = _eventDetailsController.text;
+    final eventDate = _selectedDate;
 
-    if (eventType.isEmpty || eventDetails.isEmpty) {
+    if (eventType.isEmpty || eventDetails.isEmpty || eventDate == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('種目と内容を入力してください')),
+        SnackBar(content: Text('種目、内容、予定日を入力してください')),
       );
       return;
     }
@@ -121,6 +153,7 @@ class _MapSearchState extends State<MapSearch> {
         'name': _searchController.text, // 場所名
         'eventType': eventType,
         'eventDetails': eventDetails,
+        'eventDate': eventDate, // 日付情報を追加
         'location': {
           'lat': _initialPosition.latitude,
           'lng': _initialPosition.longitude
