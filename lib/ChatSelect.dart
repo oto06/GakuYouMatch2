@@ -22,9 +22,13 @@ class ChatListScreen extends StatelessWidget {
             itemCount: groups.length,
             itemBuilder: (context, index) {
               final group = groups[index];
+              // Firestoreから日付を取得
+              final eventDate = group['eventDate']?.toDate(); // FirebaseのTimestampをDateTimeに変換
+              final formattedDate = eventDate != null ? "${eventDate.year}-${eventDate.month}-${eventDate.day}" : "日付未設定";
+
               return ListTile(
                 title: Text(group['name']),
-                subtitle: Text('${group['eventType']} - ${group['eventDetails']}'),
+                subtitle: Text('${group['eventType']} - ${group['eventDetails']} - $formattedDate'),
                 onTap: () {
                   Navigator.push(
                     context,
