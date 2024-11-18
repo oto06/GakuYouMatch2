@@ -69,6 +69,7 @@ class FirstScene extends StatelessWidget {
               },
               child: const Text('Googleアカウントで登録'),
             ),
+            const SizedBox(height: 30),
             ElevatedButton(
               onPressed: (){
                 Navigator.push(
