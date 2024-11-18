@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:gakuyoumatch2/ChatSelect.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'map_home.dart';
 import 'package:geocoding/geocoding.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class MapSearch extends StatefulWidget {
   const MapSearch({super.key});
@@ -107,7 +109,38 @@ class _MapSearchState extends State<MapSearch> {
     final eventType = _eventTypeController.text;
     final eventDetails = _eventDetailsController.text;
 
-    // 入力内容の確認と登録処理
-    print('種目: $eventType, 内容: $eventDetails');
+    if (eventType.isEmpty || eventDetails.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('種目と内容を入力してください')),
+      );
+      return;
+    }
+    try {
+      // Firestoreに新しい部屋を作成
+      final newGroup = FirebaseFirestore.instance.collection('Group').add({
+        'name': _searchController.text, // 場所名
+        'eventType': eventType,
+        'eventDetails': eventDetails,
+        'location': {
+          'lat': _initialPosition.latitude,
+          'lng': _initialPosition.longitude
+        },
+        'createdAt': FieldValue.serverTimestamp(),
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('イベントが登録されました')),
+      );
+
+      // 部屋一覧画面に遷移
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => ChatListScreen()),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('登録に失敗しました: $e')),
+      );
+    }
   }
 }

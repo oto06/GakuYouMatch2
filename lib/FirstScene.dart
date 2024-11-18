@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:gakuyoumatch2/Chat.dart';
+import 'package:gakuyoumatch2/ChatSelect.dart';
 import 'package:gakuyoumatch2/acountregister.dart';
 import 'package:gakuyoumatch2/calender.dart';
+import 'package:gakuyoumatch2/login.dart';
 import 'package:gakuyoumatch2/map%20search.dart';
 import 'package:gakuyoumatch2/profile.dart';
 import 'basicinfo.dart';
@@ -30,7 +32,7 @@ class MyApp extends StatelessWidget {
       // 初期画面を指定
       routes: {
         '/initial': (context) => const FirstScene(),
-        '/other': (context) => ChatScreen(),
+        '/other': (context) => ChatListScreen(),
       },
 
     );
@@ -67,6 +69,15 @@ class FirstScene extends StatelessWidget {
               },
               child: const Text('Googleアカウントで登録'),
             ),
+            ElevatedButton(
+              onPressed: (){
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => LoginScreen()),
+                );
+              },
+              child: const Text("ログイン"),
+            )
           ],
         ),
       ),

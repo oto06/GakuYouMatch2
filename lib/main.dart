@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:gakuyoumatch2/Chat.dart';
+import 'package:gakuyoumatch2/ChatSelect.dart';
 import 'package:gakuyoumatch2/calender.dart';
 import 'package:gakuyoumatch2/footer.dart';
 import 'package:gakuyoumatch2/header.dart';
@@ -32,7 +33,7 @@ class MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     final pageOptions = [ // ページのウィジェットをリストで管理
       const MapScreen(),
-      ChatScreen(),
+      ChatListScreen(),
       MapSearch(),
       CalendarScreen(),
       const Placeholder(),
@@ -48,7 +49,7 @@ class MyAppState extends State<MyApp> {
           scaffoldBackgroundColor: Colors.brown[200]
       ),
       home: Scaffold(
-        appBar: const Header(),
+        //appBar: const Header(),
         body:pageOptions[_selectedIndex],
         bottomNavigationBar: Footer(onItemTapped: _onItemTapped), // コールバック関数を渡す
       ),
