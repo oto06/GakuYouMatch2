@@ -1,0 +1,58 @@
+mport 'package:flutter/material.dart';
+import 'package:gakuyoumatch2/profile.dart';
+import 'package:intl/intl.dart';  // 日付フォーマット用
+import 'package:gakuyoumatch2/profile2.dart';
+
+
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Basic Info Form',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+      ),
+      home: const BasicInfoForm(),
+    );
+  }
+}
+class ElsePage extends StatelessWidget {
+  final Profile profile;
+
+  const ElsePage({super.key, required this.profile});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('登録情報')),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('ニックネーム: ${profile.nickname}', style: const TextStyle(fontSize: 18)),
+            Text('性別: ${profile.gender}', style: const TextStyle(fontSize: 18)),
+            Text('生年月日: ${profile.birthdate}', style: const TextStyle(fontSize: 18)),
+            Text('居住地: ${profile.location}', style: const TextStyle(fontSize: 18)),
+            Text('特技: ${profile.skills}', style: const TextStyle(fontSize: 18)),
+            Text('趣味: ${profile.hobbies}', style: const TextStyle(fontSize: 18)),
+            Text('その他: ${profile.others}', style: const TextStyle(fontSize: 18)),
+            const SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => ProfilePage(profile: profile)),
+                );
+              },
+              child: const Text('編集'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}

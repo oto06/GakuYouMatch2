@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:gakuyoumatch2/FirstScene.dart'as FirstScene;
 import 'package:gakuyoumatch2/acountregister.dart';
 import 'package:gakuyoumatch2/basicinfo.dart';
+import 'package:gakuyoumatch2/main.dart';
+import 'package:gakuyoumatch2/map%20search.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -29,7 +32,7 @@ class _LoginScreenState extends State<LoginScreen> {
       // ログイン成功時
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => const MyApp()), // ホーム画面へ遷移
+        MaterialPageRoute(builder: (context) =>  MyApp()), // ホーム画面へ遷移
       );
     } catch (e) {
       // エラーメッセージを表示
@@ -75,7 +78,7 @@ class _LoginScreenState extends State<LoginScreen> {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const AccountRegister()),
+                  MaterialPageRoute(builder: (context) =>  AccountRegister()),
                 );
               },
               child: const Text('新規登録はこちら'),

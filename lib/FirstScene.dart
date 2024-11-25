@@ -7,9 +7,10 @@ import 'package:gakuyoumatch2/calender.dart';
 import 'package:gakuyoumatch2/login.dart';
 import 'package:gakuyoumatch2/map%20search.dart';
 import 'package:gakuyoumatch2/profile.dart';
-import 'basicinfo.dart';
 import 'firebase_options.dart';
-import 'calender.dart';
+import 'package:gakuyoumatch2/main.dart';
+import 'package:gakuyoumatch2/profile2.dart';
+
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -31,7 +32,7 @@ class MyApp extends StatelessWidget {
       home: FirstScene(),
       // 初期画面を指定
       routes: {
-        '/initial': (context) => const FirstScene(),
+        '/initial': (context) => FirstScene(),
         '/other': (context) => ChatListScreen(),
       },
 
@@ -41,7 +42,8 @@ class MyApp extends StatelessWidget {
 
 
 class FirstScene extends StatelessWidget {
-  const FirstScene({super.key});
+   FirstScene({super.key});
+
 
   @override
   Widget build(BuildContext context) {
@@ -64,7 +66,7 @@ class FirstScene extends StatelessWidget {
                 // ボタンを押すと次の画面に遷移
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) =>  ProfilePage()),
+                  MaterialPageRoute(builder: (context) =>  MapSearch()),
                 );
               },
               child: const Text('Googleアカウントで登録'),

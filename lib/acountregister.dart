@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'basicinfo.dart';
+import 'package:gakuyoumatch2/else.dart';
+import 'package:gakuyoumatch2/profile.dart';
+import 'package:gakuyoumatch2/main.dart';
 
 class AccountRegister extends StatefulWidget {
-  const AccountRegister({super.key});
+  AccountRegister({super.key});
 
   @override
   _AccountRegisterState createState() => _AccountRegisterState();
@@ -15,7 +17,6 @@ class AccountRegister extends StatefulWidget {
     throw UnimplementedError();
   }
 }
-@override
 
 
 class  _AccountRegisterState extends State<AccountRegister> {
@@ -36,7 +37,7 @@ class  _AccountRegisterState extends State<AccountRegister> {
       print('User registered: ${userCredential.user?.uid}');//登録成功したら次の画面に移行
       Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => const BasicInfoForm()),
+          MaterialPageRoute(builder: (context) =>  ElsePage()),
       );
       // 登録成功後の画面遷移などをここで行うことができます
     } catch (e) {

@@ -34,9 +34,13 @@ dependencies:
   flutter:
     sdk: flutter
 
-
   google_maps_flutter: ^2.9.0
+  google_place: ^0.4.3
   geocoding: ^3.0.0
+  google_maps_webservice: ^0.0.16
+  geolocator: ^13.0.2
+
+
 
   image_picker: ^1.1.2
   intl: ^0.17.0
@@ -53,6 +57,7 @@ dependencies:
   cupertino_icons: ^1.0.8
   flutter_chat_ui: ^1.6.15
   flutter_chat_types: ^3.4.1
+  shared_preferences: ^2.3.3
 
 dev_dependencies:
   flutter_test:
