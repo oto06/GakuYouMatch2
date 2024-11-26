@@ -20,7 +20,9 @@ import 'package:gakuyoumatch2/ProfileProvider.dart';
 import 'package:gakuyoumatch2/main.dart';
 import 'dart:io';
 
-void main() {
+void main() async{
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   runApp(const MyApp());
 }
 

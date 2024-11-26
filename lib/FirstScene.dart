@@ -12,7 +12,7 @@ import 'package:gakuyoumatch2/main.dart';
 import 'package:gakuyoumatch2/profile2.dart';
 
 
-Future<void> main() async {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform); // Firebaseの初期化
   runApp(const MyApp());
