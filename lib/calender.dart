@@ -8,78 +8,75 @@ class CalendarScreen extends StatefulWidget {
 }
 
 class _CalendarScreenState extends State<CalendarScreen> {
-  late Map<DateTime, List<String>> _events;
+  late Map<DateTime, List<Map<String, dynamic>>> _events;
   late DateTime _focusedDay;
 
   @override
   void initState() {
     super.initState();
-    _events = {};  // 初期値として空のイベントマップを設定
+    _events = {}; // イベントデータを格納
     _focusedDay = DateTime.now(); // 初期値として現在の日付を設定
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('カレンダー')),
+      appBar: AppBar(title: const Text('カレンダー')),
       body: StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance
             .collection('Group') // 'Group'コレクションを監視
             .orderBy('eventDate')
             .snapshots(),
         builder: (context, snapshot) {
-          // データが取得中の場合もカレンダーを表示
           if (snapshot.connectionState == ConnectionState.waiting) {
-            // データがロード中でもカレンダーを表示
             return _buildCalendar();
           }
 
-          // データが空でもカレンダーは表示
           if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-            return _buildCalendar(); // 空データでもカレンダーを表示
+            return _buildCalendar();
           }
 
           final groups = snapshot.data!.docs;
-          print('Firestoreから取得したイベント数: ${groups.length}');  // デバッグ用
 
           _events.clear();
           for (var group in groups) {
             final eventDate = group['eventDate']?.toDate();
-            print('イベントの日付: $eventDate');  // 日付をデバッグ出力
-
             if (eventDate != null) {
-              DateTime dateKey = DateTime.utc(eventDate.year, eventDate.month, eventDate.day);
+              DateTime dateKey =
+              DateTime.utc(eventDate.year, eventDate.month, eventDate.day);
               if (_events[dateKey] == null) {
                 _events[dateKey] = [];
               }
-              _events[dateKey]?.add(group['name']);
+              _events[dateKey]?.add({
+                'name': group['name'], // 場所
+                'eventType': group['eventType'], // 種目
+                'eventDetails': group['eventDetails'], // 内容
+              });
             }
           }
 
-          return _buildCalendar(); // イベントがあっても、カレンダー表示部分は共通
+          return _buildCalendar();
         },
       ),
     );
   }
 
-  // カレンダー表示を別のメソッドにまとめる
   Widget _buildCalendar() {
     return TableCalendar(
       firstDay: DateTime.utc(2020, 1, 1),
       lastDay: DateTime.utc(2050, 12, 31),
       focusedDay: _focusedDay,
       eventLoader: (day) {
-        // イベントデータが空でもカレンダーの日付に合わせてリストを返す
         return _events[day] ?? [];
       },
-      calendarStyle: CalendarStyle(
+      calendarStyle: const CalendarStyle(
         todayDecoration: BoxDecoration(
           color: Colors.blue,
           shape: BoxShape.circle,
         ),
         weekendTextStyle: TextStyle(color: Colors.red),
       ),
-      headerStyle: HeaderStyle(
+      headerStyle: const HeaderStyle(
         formatButtonVisible: false,
       ),
       selectedDayPredicate: (day) {
@@ -89,9 +86,45 @@ class _CalendarScreenState extends State<CalendarScreen> {
         setState(() {
           _focusedDay = focusedDay;
         });
+
+        final selectedEvents = _events[selectedDay] ?? [];
+        if (selectedEvents.isNotEmpty) {
+          _showEventDetails(selectedEvents);
+        }
+      },
+    );
+  }
+
+  void _showEventDetails(List<Map<String, dynamic>> events) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('イベント詳細'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: events.map((event) {
+              return Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('場所: ${event['name'] ?? '不明'}'),
+                    Text('種目: ${event['eventType'] ?? '不明'}'),
+                    Text('内容: ${event['eventDetails'] ?? '不明'}'),
+                  ],
+                ),
+              );
+            }).toList(),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('閉じる'),
+            ),
+          ],
+        );
       },
     );
   }
 }
-
-
