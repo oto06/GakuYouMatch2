@@ -13,9 +13,6 @@ import 'package:image_picker/image_picker.dart'; // 写真選択のために追�
 import 'package:firebase_storage/firebase_storage.dart'; // 写真アップロードのために追加
 
 
-
-
-
 class ElsePage extends StatefulWidget {
   const ElsePage({Key? key}) : super(key: key);
 
@@ -74,15 +71,22 @@ class _ElsePageState extends State<ElsePage> {
         hobbiesController.text = profile.hobbies;
         skillsController.text = profile.skills;
         othersController.text = profile.others;
+
+        // Firebase Storageからの画像URLをセット
+        if (profile.imageUrl != null && profile.imageUrl!.isNotEmpty) {
+          _selectedImage = File(profile.imageUrl!); // 仮の処理
+        }
       });
     }
   }
+
 
   Future<void> _saveProfile() async {
     String? imageUrl;
     if (_selectedImage != null) {
       imageUrl = await _uploadImage(_selectedImage!);
     }
+
     Profile profile = Profile(
       nickname: nicknameController.text,
       gender: selectedGender ?? '',
@@ -96,12 +100,16 @@ class _ElsePageState extends State<ElsePage> {
 
     await _profileService.saveProfile(profile);
 
-    // Firestore にニックネームを保存
     const uid = "82091008-a484-4a89-ae75-a22bf8d6f3ac"; // 仮のユーザーIDを使用
+    Map<String, dynamic> userData = {'nickname': profile.nickname};
+    if (imageUrl != null) {
+      userData['imageUrl'] = imageUrl;
+    }
+
     await FirebaseFirestore.instance
         .collection('Users')
         .doc(uid)
-        .set({'nickname': profile.nickname, 'imageUrl': imageUrl},SetOptions(merge: true));
+        .set(userData, SetOptions(merge: true));
   }
 
   Future<void> _pickDate(BuildContext context) async {
@@ -136,11 +144,15 @@ class _ElsePageState extends State<ElsePage> {
       UploadTask uploadTask = FirebaseStorage.instance.ref(fileName).putFile(image);
       TaskSnapshot snapshot = await uploadTask;
       return await snapshot.ref.getDownloadURL();
+    } on FirebaseException catch (e) {
+      print('Firebase Storage エラー: $e');
+      return null;
     } catch (e) {
-      print('写真のアップロード中にエラーが発生しました: $e');
+      print('予期しないエラー: $e');
       return null;
     }
   }
+
 
   @override
   Widget build(BuildContext context) {

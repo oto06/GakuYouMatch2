@@ -3,6 +3,7 @@ import 'package:geocoding/geocoding.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class MapSearch extends StatefulWidget {
   final Map<String, dynamic>? initialData; // 初期データを受け取る
@@ -208,6 +209,21 @@ class _MapSearchState extends State<MapSearch> {
         '${pickedDate.year}-${pickedDate.month}-${pickedDate.day}';
       });
     }
+  }
+  Future<void> saveGroupData(Map<String, dynamic> groupData) async {
+    final currentUser = FirebaseAuth.instance.currentUser;
+
+    if (currentUser == null) {
+      throw Exception("ログインが必要です");
+    }
+
+    final groupDataWithUserId = {
+      ...groupData,
+      'userId': currentUser.uid, // 現在のユーザーIDを追加
+      'createdAt': FieldValue.serverTimestamp(),
+    };
+
+    await FirebaseFirestore.instance.collection('Group').add(groupDataWithUserId);
   }
 
   // イベント登録
