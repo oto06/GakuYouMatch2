@@ -49,9 +49,6 @@ class  _AccountRegisterState extends State<AccountRegister> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('アカウント登録'), // アプリバーのタイトル
-      ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(

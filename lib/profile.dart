@@ -6,6 +6,7 @@ class Profile {
   final String hobbies;
   final String skills;
   final String others;
+  String? imageUrl; // 写真URLのフィールドを追加
 
   Profile({
     required this.nickname,
@@ -15,6 +16,7 @@ class Profile {
     required this.hobbies,
     required this.skills,
     required this.others,
+    this.imageUrl, // コンストラクタに追加
   });
 
   // プロファイルをMapに変換（保存用）
