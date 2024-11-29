@@ -8,6 +8,10 @@ import 'package:gakuyoumatch2/firebase_options.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:gakuyoumatch2/profile2.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'dart:io'; // File型のために追加
+import 'package:image_picker/image_picker.dart'; // 写真選択のために追加
+import 'package:firebase_storage/firebase_storage.dart'; // 写真アップロードのために追加
+
 
 
 
@@ -75,6 +79,10 @@ class _ElsePageState extends State<ElsePage> {
   }
 
   Future<void> _saveProfile() async {
+    String? imageUrl;
+    if (_selectedImage != null) {
+      imageUrl = await _uploadImage(_selectedImage!);
+    }
     Profile profile = Profile(
       nickname: nicknameController.text,
       gender: selectedGender ?? '',
@@ -83,6 +91,7 @@ class _ElsePageState extends State<ElsePage> {
       hobbies: hobbiesController.text,
       skills: skillsController.text,
       others: othersController.text,
+      imageUrl: imageUrl, // プロフィールに写真URLを追加
     );
 
     await _profileService.saveProfile(profile);
@@ -92,7 +101,7 @@ class _ElsePageState extends State<ElsePage> {
     await FirebaseFirestore.instance
         .collection('Users')
         .doc(uid)
-        .set({'nickname': profile.nickname}, SetOptions(merge: true));
+        .set({'nickname': profile.nickname, 'imageUrl': imageUrl},SetOptions(merge: true));
   }
 
   Future<void> _pickDate(BuildContext context) async {
@@ -109,16 +118,55 @@ class _ElsePageState extends State<ElsePage> {
       });
     }
   }
+  File? _selectedImage; // 選択された写真を保持
+  final ImagePicker _picker = ImagePicker(); // ImagePickerのインスタンス
+
+  Future<void> _pickImage() async {
+    final XFile? pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+    if (pickedFile != null) {
+      setState(() {
+        _selectedImage = File(pickedFile.path);
+      });
+    }
+  }
+
+  Future<String?> _uploadImage(File image) async {
+    try {
+      String fileName = 'profile_images/${DateTime.now().millisecondsSinceEpoch}.jpg';
+      UploadTask uploadTask = FirebaseStorage.instance.ref(fileName).putFile(image);
+      TaskSnapshot snapshot = await uploadTask;
+      return await snapshot.ref.getDownloadURL();
+    } catch (e) {
+      print('写真のアップロード中にエラーが発生しました: $e');
+      return null;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('登録情報')),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: SingleChildScrollView(
           child: Column(
             children: [
+              if (_selectedImage != null)
+                Image.file(
+                  _selectedImage!,
+                  width: 100,
+                  height: 100,
+                  fit: BoxFit.cover,
+                )
+              else
+                const Icon(Icons.account_circle, size: 100),
+
+              const SizedBox(height: 16),
+
+// 写真選択ボタン
+              ElevatedButton(
+                onPressed: _pickImage,
+                child: const Text('写真を選択'),
+              ),
               TextField(
                 controller: nicknameController,
                 decoration: const InputDecoration(labelText: 'ニックネーム'),

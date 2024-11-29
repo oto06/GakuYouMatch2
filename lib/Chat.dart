@@ -21,10 +21,6 @@ class ChatRoomState extends State<ChatScene> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.roomName),
-        backgroundColor: Colors.blue,
-      ),
       body: StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance
             .collection('Group')

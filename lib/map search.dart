@@ -31,9 +31,6 @@ class _MapSearchState extends State<MapSearch> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('イベント登録'),
-      ),
       body: SafeArea(
         child: SingleChildScrollView(
           child: Column(
