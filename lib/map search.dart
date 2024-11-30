@@ -237,6 +237,13 @@ class _MapSearchState extends State<MapSearch> {
       );
       return;
     }
+    final currentUser = FirebaseAuth.instance.currentUser;
+    if (currentUser == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('ログインが必要です')),
+      );
+      return;
+    }
 
     try {
       await FirebaseFirestore.instance.collection('Group').add({
@@ -248,6 +255,7 @@ class _MapSearchState extends State<MapSearch> {
           'lat': _selectedPosition.latitude,
           'lng': _selectedPosition.longitude,
         },
+        'userId': currentUser.uid, // 現在のユーザーIDを保存
         'createdAt': FieldValue.serverTimestamp(),
       });
 
