@@ -21,6 +21,15 @@ class ChatRoomState extends State<ChatScene> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: Text(widget.roomName), // 部屋の名前をタイトルに表示
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back), // 戻るボタンのアイコン
+          onPressed: () {
+            Navigator.pop(context); // 前の画面に戻る
+          },
+        ),
+      ),
       body: StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance
             .collection('Group')
@@ -32,11 +41,6 @@ class ChatRoomState extends State<ChatScene> {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
           }
-
-          if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-            return const Center(child: Text("まだメッセージがありません"));
-          }
-
           // 非同期処理を解決するために Future を待つ
           return FutureBuilder<List<types.Message>>(
             future: _convertMessages(snapshot.data!.docs),
