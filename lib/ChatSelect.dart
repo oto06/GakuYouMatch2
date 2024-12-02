@@ -16,86 +16,51 @@ class ChatListScreen extends StatelessWidget {
     }
 
     return Scaffold(
-        appBar: AppBar(title: const Text('Chat List')),
-        body: StreamBuilder<QuerySnapshot>(
-          // クエリで自分が登録したグループと参加したチャットルームを取得
-          stream: FirebaseFirestore.instance
-              .collection('Group')
-              .where('userId', isEqualTo: currentUser.uid) // 自分が登録したグループ
-              .snapshots(),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(child: CircularProgressIndicator());
-            }
+      appBar: AppBar(title: const Text('Chat List')),
+      body: StreamBuilder<QuerySnapshot>(
+        stream: FirebaseFirestore.instance
+            .collection('ChatRooms')
+            .where('participants', arrayContains: currentUser.uid)
+            .snapshots(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          }
+          if (snapshot.hasError) {
+            return const Center(child: Text('エラーが発生しました'));
+          }
 
-            if (snapshot.hasError) {
-              return const Center(
-                  child: Text('データの取得中にエラーが発生しました'));
-            }
+          final chatRooms = snapshot.data?.docs ?? [];
+          if (chatRooms.isEmpty) {
+            return const Center(child: Text('登録または参加したチャットがありません'));
+          }
 
-            final groups = snapshot.data?.docs ?? [];
+          return ListView.builder(
+            itemCount: chatRooms.length,
+            itemBuilder: (context, index) {
+              final chatRoomData = chatRooms[index].data() as Map<String, dynamic>;
+              final chatRoomName = chatRoomData['name'] ?? '未設定';
 
-            // 参加しているグループも取得
-            final participatingGroupsStream = FirebaseFirestore.instance
-                .collection('ChatRooms')
-                .where('participants',
-                arrayContains: currentUser.uid) // 参加者に自分のuidが含まれているグループ
-                .snapshots();
-
-            return StreamBuilder<QuerySnapshot>(
-              stream: participatingGroupsStream,
-              builder: (context, participatingSnapshot) {
-                if (participatingSnapshot.connectionState ==
-                    ConnectionState.waiting) {
-                  return const Center(child: CircularProgressIndicator());
-                }
-
-                if (participatingSnapshot.hasError) {
-                  return const Center(child: Text('エラーが発生しました'));
-                }
-
-                final participatingGroups = participatingSnapshot.data?.docs ??
-                    [];
-                final allGroups = [...groups, ...participatingGroups];
-
-                if (allGroups.isEmpty) {
-                  return const Center(
-                      child: Text('登録または参加したチャットがありません'));
-                }
-
-                return ListView.builder(
-                  itemCount: allGroups.length,
-                  itemBuilder: (context, index) {
-                    final groupData = allGroups[index].data() as Map<
-                        String,
-                        dynamic>;
-                    final groupName = groupData['name'] ??
-                        '未設定'; // 名前がnullならデフォルトを表示
-                    final eventType = groupData['eventType'] ?? '不明';
-
-                    return ListTile(
-                      title: Text(groupName),
-                      subtitle: Text(eventType),
-                      onTap: () {
-                        // チャットルームに移動する処理
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) =>
-                                ChatScene(
-                                  roomId: allGroups[index].id,
-                                  roomName: groupName,
-                                ),
-                          ),
-                        );
-                      },
-                    );
-                  },
-                );
-              },
-            );
-          },
-        )
+              return ListTile(
+                title: Text(chatRoomName),
+                subtitle: Text('参加者: ${chatRoomData['participants']?.length ?? 0}人'),
+                onTap: () {
+                  // チャット画面に移動
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ChatScene(
+                        roomId: chatRooms[index].id,
+                        roomName: chatRoomName,
+                      ),
+                    ),
+                  );
+                },
+              );
+            },
+          );
+        },
+      ),
     );
   }
 }

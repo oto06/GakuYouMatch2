@@ -58,6 +58,7 @@ class _MapScreenState extends State<MapScreen> {
   }
 
   // 登録ボタンの動作
+  // 登録ボタンの動作
   Future<void> _joinChatRoom() async {
     final currentUser = FirebaseAuth.instance.currentUser;
 
@@ -69,35 +70,64 @@ class _MapScreenState extends State<MapScreen> {
     }
 
     try {
+      final locationId = _selectedLocation!['id'];
+
+      // locationId で既存のチャットルームを検索
       final chatRoomQuery = await FirebaseFirestore.instance
           .collection('ChatRooms')
-          .where('locationId', isEqualTo: _selectedLocation!['id'])
+          .where('locationId', isEqualTo: locationId)
           .limit(1)
           .get();
 
       if (chatRoomQuery.docs.isNotEmpty) {
-        // 既存のチャットルームに参加
-        final chatRoomId = chatRoomQuery.docs.first.id;
+        // 既存のチャットルームを取得
+        final chatRoom = chatRoomQuery.docs.first;
+        final chatRoomId = chatRoom.id;
+
+        // Firestoreに参加者を追加
         await FirebaseFirestore.instance.collection('ChatRooms').doc(chatRoomId).update({
           'participants': FieldValue.arrayUnion([currentUser.uid]),
         });
 
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('チャットルームに参加しました')),
-        );
-
-        // チャットリスト画面に遷移
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => ChatListScreen(),
-          ),
+          SnackBar(content: Text('既存のチャットルームに参加しました')),
         );
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('チャットルームが見つかりません')),
-        );
+        // チャットルームが存在しない場合、新規作成
+        final groupData = await FirebaseFirestore.instance
+            .collection('Group')
+            .doc(locationId)
+            .get();
+
+        if (groupData.exists) {
+          final newChatRoom = {
+            'locationId': locationId,
+            'name': groupData['name'] ?? '未設定',
+            'eventType': groupData['eventType'],
+            'eventDetails': groupData['eventDetails'],
+            'participants': [currentUser.uid],
+            'createdAt': FieldValue.serverTimestamp(),
+          };
+
+          await FirebaseFirestore.instance.collection('ChatRooms').add(newChatRoom);
+
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('新しいチャットルームを作成しました')),
+          );
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('選択されたグループデータが見つかりません')),
+          );
+        }
       }
+
+      // チャットリスト画面に遷移
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => ChatListScreen(),
+        ),
+      );
     } catch (e) {
       print('エラー: $e');
       ScaffoldMessenger.of(context).showSnackBar(
@@ -105,6 +135,9 @@ class _MapScreenState extends State<MapScreen> {
       );
     }
   }
+
+
+
 
   @override
   Widget build(BuildContext context) {
