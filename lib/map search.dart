@@ -210,6 +210,7 @@ class _MapSearchState extends State<MapSearch> {
       });
     }
   }
+
   Future<void> saveGroupData(Map<String, dynamic> groupData) async {
     final currentUser = FirebaseAuth.instance.currentUser;
 
@@ -223,7 +224,8 @@ class _MapSearchState extends State<MapSearch> {
       'createdAt': FieldValue.serverTimestamp(),
     };
 
-    await FirebaseFirestore.instance.collection('Group').add(groupDataWithUserId);
+    await FirebaseFirestore.instance.collection('Group').add(
+        groupDataWithUserId);
   }
 
   // イベント登録
@@ -237,6 +239,7 @@ class _MapSearchState extends State<MapSearch> {
       );
       return;
     }
+
     final currentUser = FirebaseAuth.instance.currentUser;
     if (currentUser == null) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -246,22 +249,58 @@ class _MapSearchState extends State<MapSearch> {
     }
 
     try {
-      await FirebaseFirestore.instance.collection('Group').add({
-        'name': _searchController.text,
-        'eventType': eventType,
-        'eventDetails': eventDetails,
-        'eventDate': _selectedDate,
-        'location': {
-          'lat': _selectedPosition.latitude,
-          'lng': _selectedPosition.longitude,
-        },
-        'userId': currentUser.uid, // 現在のユーザーIDを保存
-        'createdAt': FieldValue.serverTimestamp(),
-      });
+      // Step 1: Group にイベントデータを登録
+      final groupRef = await FirebaseFirestore.instance.collection('Group').add(
+          {
+            'name': _searchController.text,
+            'eventType': eventType,
+            'eventDetails': eventDetails,
+            'eventDate': _selectedDate,
+            'location': {
+              'lat': _selectedPosition.latitude,
+              'lng': _selectedPosition.longitude,
+            },
+            'userId': currentUser.uid, // 現在のユーザーIDを保存
+            'createdAt': FieldValue.serverTimestamp(),
+          });
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('イベントが登録されました')),
-      );
+      final locationId = groupRef.id; // 登録された Group ドキュメントの ID
+
+      // Step 2: ChatRooms に対応するチャットルームを作成
+      final chatRoomQuery = await FirebaseFirestore.instance
+          .collection('ChatRooms')
+          .where('locationId', isEqualTo: locationId)
+          .limit(1)
+          .get();
+
+      if (chatRoomQuery.docs.isEmpty) {
+        // チャットルームが存在しない場合、新規作成
+        await FirebaseFirestore.instance.collection('ChatRooms').add({
+          'locationId': locationId,
+          'name': _searchController.text,
+          'eventType': eventType,
+          'eventDetails': eventDetails,
+          'participants': [currentUser.uid],
+          'createdAt': FieldValue.serverTimestamp(),
+        });
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+              content: Text('イベントとチャットルームを登録しました')),
+        );
+      } else {
+        // すでに存在する場合、参加者を更新
+        final chatRoomId = chatRoomQuery.docs.first.id;
+        await FirebaseFirestore.instance.collection('ChatRooms')
+            .doc(chatRoomId)
+            .update({
+          'participants': FieldValue.arrayUnion([currentUser.uid]),
+        });
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('チャットルームに参加しました')),
+        );
+      }
     } catch (e) {
       print('登録エラー: $e');
       ScaffoldMessenger.of(context).showSnackBar(
@@ -270,7 +309,6 @@ class _MapSearchState extends State<MapSearch> {
     }
   }
 }
-
 
 
 

@@ -48,9 +48,6 @@ class FirstScene extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title:const Text ('First Screen'),
-      ),
       body: Center(
         child: Column( // Column で複数のウィジェットをまとめる
           mainAxisAlignment: MainAxisAlignment.start, // ウィジェットを上に配置
