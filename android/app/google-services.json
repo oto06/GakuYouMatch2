@@ -2,9 +2,28 @@
   "project_info": {
     "project_number": "489857285870",
     "project_id": "gakuyoumatch",
-    "storage_bucket": "gakuyoumatch.appspot.com"
+    "storage_bucket": "gakuyoumatch.firebasestorage.app"
   },
   "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:489857285870:android:7607c107b11132f8bf7dff",
+        "android_client_info": {
+          "package_name": "com.example.gakuyoumatc"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD7k66rC2919c5A-Bfl8CFUcRLKzzNWnm0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
     {
       "client_info": {
         "mobilesdk_app_id": "1:489857285870:android:4ca232d2df1e88c3bf7dff",

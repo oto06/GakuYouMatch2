@@ -46,16 +46,16 @@ class DefaultFirebaseOptions {
     messagingSenderId: '489857285870',
     projectId: 'gakuyoumatch',
     authDomain: 'gakuyoumatch.firebaseapp.com',
-    storageBucket: 'gakuyoumatch.appspot.com',
+    storageBucket: 'gakuyoumatch.firebasestorage.app',
     measurementId: 'G-6HG1BFTGLQ',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyD7k66rC2919c5A-Bfl8CFUcRLKzzNWnm0',
-    appId: '1:489857285870:android:4ca232d2df1e88c3bf7dff',
+    appId: '1:489857285870:android:7607c107b11132f8bf7dff',
     messagingSenderId: '489857285870',
     projectId: 'gakuyoumatch',
-    storageBucket: 'gakuyoumatch.appspot.com',
+    storageBucket: 'gakuyoumatch.firebasestorage.app',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
@@ -63,7 +63,7 @@ class DefaultFirebaseOptions {
     appId: '1:489857285870:ios:42c156be0591d89fbf7dff',
     messagingSenderId: '489857285870',
     projectId: 'gakuyoumatch',
-    storageBucket: 'gakuyoumatch.appspot.com',
+    storageBucket: 'gakuyoumatch.firebasestorage.app',
     iosBundleId: 'com.example.gakuyoumatch2',
   );
 
@@ -72,7 +72,7 @@ class DefaultFirebaseOptions {
     appId: '1:489857285870:ios:42c156be0591d89fbf7dff',
     messagingSenderId: '489857285870',
     projectId: 'gakuyoumatch',
-    storageBucket: 'gakuyoumatch.appspot.com',
+    storageBucket: 'gakuyoumatch.firebasestorage.app',
     iosBundleId: 'com.example.gakuyoumatch2',
   );
 
@@ -82,7 +82,8 @@ class DefaultFirebaseOptions {
     messagingSenderId: '489857285870',
     projectId: 'gakuyoumatch',
     authDomain: 'gakuyoumatch.firebaseapp.com',
-    storageBucket: 'gakuyoumatch.appspot.com',
+    storageBucket: 'gakuyoumatch.firebasestorage.app',
     measurementId: 'G-54PS00E7K4',
   );
+
 }
