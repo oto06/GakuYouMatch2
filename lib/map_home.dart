@@ -32,30 +32,47 @@ class _MapScreenState extends State<MapScreen> {
 
   // Firestoreから登録した場所のデータを取得
   Future<void> _fetchLocations() async {
-    FirebaseFirestore.instance.collection('Group').snapshots().listen((snapshot) {
-      setState(() {
-        _markers.clear();
-        for (var doc in snapshot.docs) {
-          final data = doc.data();
-          final position = LatLng(data['location']['lat'], data['location']['lng']);
-          final marker = Marker(
-            markerId: MarkerId(doc.id),
-            position: position,
-            infoWindow: InfoWindow(
-              title: data['name']?? '未設定',
-              snippet: data['eventType'],
-              onTap: () {
-                setState(() {
-                  _selectedLocation = {...data, 'id': doc.id};
-                });
-              },
-            ),
-          );
-          _markers.add(marker);
-        }
-      });
-    });
+    FirebaseFirestore.instance.collection('Group').snapshots().listen(
+          (snapshot) {
+        setState(() {
+          _markers.clear();
+          for (var doc in snapshot.docs) {
+            try {
+              final data = doc.data();
+              if (data.containsKey('location') &&
+                  data['location'] is Map &&
+                  data['location']['lat'] != null &&
+                  data['location']['lng'] != null) {
+                final position = LatLng(data['location']['lat'], data['location']['lng']);
+                final marker = Marker(
+                  markerId: MarkerId(doc.id),
+                  position: position,
+                  infoWindow: InfoWindow(
+                    title: data['name'] ?? '未設定',
+                    snippet: data['eventType'],
+                    onTap: () {
+                      setState(() {
+                        _selectedLocation = {...data, 'id': doc.id};
+                      });
+                    },
+                  ),
+                );
+                _markers.add(marker);
+              } else {
+                print("Invalid location data: $data");
+              }
+            } catch (e) {
+              print("Error processing document ${doc.id}: $e");
+            }
+          }
+        });
+      },
+      onError: (error) {
+        print("Error fetching locations: $error");
+      },
+    );
   }
+
 
   // 登録ボタンの動作
   // 登録ボタンの動作
