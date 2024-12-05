@@ -81,7 +81,7 @@ class _ElsePageState extends State<ElsePage> {
   Future<void> _saveProfile() async {
     String? uploadedImageUrl;
     if (_selectedImage != null) {
-      uploadedImageUrl = await _uploadImage(_selectedImage!); // 画像アップロード
+      uploadedImageUrl = await _uploadImage(_selectedImage!);
     }
 
     // プロフィールデータをまとめる
