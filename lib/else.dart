@@ -1,17 +1,9 @@
 import 'package:flutter/material.dart';
-import 'profile.dart';
-import 'package:gakuyoumatch2/profile.dart';
-import 'package:provider/provider.dart';
-import 'package:gakuyoumatch2/main.dart';
-import 'package:flutter/material.dart';
-import 'package:gakuyoumatch2/firebase_options.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:gakuyoumatch2/profile2.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'dart:io'; // File型のために追加
-import 'package:image_picker/image_picker.dart'; // 写真選択のために追加
-import 'package:firebase_storage/firebase_storage.dart'; // 写真アップロードのために追加
-
+import 'package:firebase_auth/firebase_auth.dart'; // FirebaseAuthインポート
+import 'package:cloud_firestore/cloud_firestore.dart'; // Firestoreインポート
+import 'package:firebase_storage/firebase_storage.dart'; // FirebaseStorageインポート
+import 'package:image_picker/image_picker.dart'; // 画像選択インポート
+import 'dart:io'; // File型インポート
 
 class ElsePage extends StatefulWidget {
   const ElsePage({Key? key}) : super(key: key);
@@ -27,30 +19,26 @@ class _ElsePageState extends State<ElsePage> {
   late TextEditingController skillsController;
   late TextEditingController othersController;
 
-  final ProfileService _profileService = ProfileService();
-
   String? selectedGender; // 選択された性別
   DateTime? selectedDate; // 選択された生年月日
+  File? _selectedImage; // 選択された写真を保持
+  final ImagePicker _picker = ImagePicker(); // 画像選択のインスタンス
+  String? imageUrl; // Firestoreから取得する画像URL
 
   @override
   void initState() {
     super.initState();
-    // Firebase 初期化
-    Firebase.initializeApp();
-
-    // コントローラーの初期化
     nicknameController = TextEditingController();
     locationController = TextEditingController();
     hobbiesController = TextEditingController();
     skillsController = TextEditingController();
     othersController = TextEditingController();
-
+    // プロフィール情報をFirestoreから読み込む
     _loadProfile();
   }
 
   @override
   void dispose() {
-    // コントローラーを解放
     nicknameController.dispose();
     locationController.dispose();
     hobbiesController.dispose();
@@ -59,76 +47,71 @@ class _ElsePageState extends State<ElsePage> {
     super.dispose();
   }
 
+  // Firestoreからプロフィールを読み込む処理
   Future<void> _loadProfile() async {
-    Profile? profile = await _profileService.loadProfile();
+    User? user = FirebaseAuth.instance.currentUser;
 
-    if (profile != null) {
-      setState(() {
-        nicknameController.text = profile.nickname;
-        selectedGender = profile.gender.isNotEmpty ? profile.gender : null;
-        selectedDate = DateTime.tryParse(profile.birthdate);
-        locationController.text = profile.location;
-        hobbiesController.text = profile.hobbies;
-        skillsController.text = profile.skills;
-        othersController.text = profile.others;
+    if (user != null) {
+      // Firestoreから現在のユーザーのプロフィール情報を取得
+      DocumentSnapshot userDoc = await FirebaseFirestore.instance
+          .collection('Users')
+          .doc(user.uid) // ユーザーIDを使ってドキュメントを取得
+          .get();
 
-        // Firebase Storageからの画像URLをセット
-        if (profile.imageUrl != null && profile.imageUrl!.isNotEmpty) {
-          _selectedImage = File(profile.imageUrl!); // 仮の処理
-        }
-      });
+      if (userDoc.exists) {
+        var data = userDoc.data() as Map<String, dynamic>;
+
+        setState(() {
+          nicknameController.text = data['nickname'] ?? '';
+          selectedGender = data['gender'] ?? '';
+          selectedDate = data['birthdate'] != null
+              ? DateTime.tryParse(data['birthdate'])
+              : null;
+          locationController.text = data['location'] ?? '';
+          hobbiesController.text = data['hobbies'] ?? '';
+          skillsController.text = data['skills'] ?? '';
+          othersController.text = data['others'] ?? '';
+          imageUrl = data['imageUrl']; // Firestoreから画像URLを取得
+        });
+      }
     }
   }
 
-
+  // プロフィールの保存処理
   Future<void> _saveProfile() async {
-    String? imageUrl;
+    String? uploadedImageUrl;
     if (_selectedImage != null) {
-      imageUrl = await _uploadImage(_selectedImage!);
+      uploadedImageUrl = await _uploadImage(_selectedImage!); // 画像アップロード
     }
 
-    Profile profile = Profile(
-      nickname: nicknameController.text,
-      gender: selectedGender ?? '',
-      birthdate: selectedDate?.toIso8601String() ?? '',
-      location: locationController.text,
-      hobbies: hobbiesController.text,
-      skills: skillsController.text,
-      others: othersController.text,
-      imageUrl: imageUrl, // プロフィールに写真URLを追加
-    );
+    // プロフィールデータをまとめる
+    Map<String, dynamic> userData = {
+      'nickname': nicknameController.text,
+      'gender': selectedGender ?? '',
+      'birthdate': selectedDate?.toIso8601String() ?? '',
+      'location': locationController.text,
+      'hobbies': hobbiesController.text,
+      'skills': skillsController.text,
+      'others': othersController.text,
+      'imageUrl': uploadedImageUrl, // 画像URLを保存
+    };
 
-    await _profileService.saveProfile(profile);
+    // Firebase Authenticationで現在のユーザーUIDを取得
+    User? user = FirebaseAuth.instance.currentUser;
 
-    const uid = "82091008-a484-4a89-ae75-a22bf8d6f3ac"; // 仮のユーザーIDを使用
-    Map<String, dynamic> userData = {'nickname': profile.nickname};
-    if (imageUrl != null) {
-      userData['imageUrl'] = imageUrl;
-    }
-
-    await FirebaseFirestore.instance
-        .collection('Users')
-        .doc(uid)
-        .set(userData, SetOptions(merge: true));
-  }
-
-  Future<void> _pickDate(BuildContext context) async {
-    DateTime? picked = await showDatePicker(
-      context: context,
-      initialDate: selectedDate ?? DateTime.now(),
-      firstDate: DateTime(1900),
-      lastDate: DateTime.now(),
-    );
-
-    if (picked != null) {
-      setState(() {
-        selectedDate = picked;
-      });
+    if (user != null) {
+      // Firestoreにユーザー情報を保存
+      await FirebaseFirestore.instance
+          .collection('Users') // 'Users'コレクションに保存
+          .doc(user.uid) // 現在のユーザーIDをドキュメントIDとして使用
+          .set(userData, SetOptions(merge: true)); // データをマージして保存
+    } else {
+      // ユーザーがログインしていない場合の処理
+      print("ユーザーがログインしていません");
     }
   }
-  File? _selectedImage; // 選択された写真を保持
-  final ImagePicker _picker = ImagePicker(); // ImagePickerのインスタンス
 
+  // 画像選択処理
   Future<void> _pickImage() async {
     final XFile? pickedFile = await _picker.pickImage(source: ImageSource.gallery);
     if (pickedFile != null) {
@@ -138,6 +121,7 @@ class _ElsePageState extends State<ElsePage> {
     }
   }
 
+  // 画像アップロード処理
   Future<String?> _uploadImage(File image) async {
     try {
       String fileName = 'profile_images/${DateTime.now().millisecondsSinceEpoch}.jpg';
@@ -153,28 +137,42 @@ class _ElsePageState extends State<ElsePage> {
     }
   }
 
+  // 生年月日を選択する処理
+  Future<void> _pickDate(BuildContext context) async {
+    DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: selectedDate ?? DateTime.now(),
+      firstDate: DateTime(1900),
+      lastDate: DateTime.now(),
+    );
+
+    if (picked != null) {
+      setState(() {
+        selectedDate = picked;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(title: const Text('プロフィール')),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: SingleChildScrollView(
           child: Column(
             children: [
-              if (_selectedImage != null)
-                Image.file(
-                  _selectedImage!,
+              // Firestoreから取得した画像URLを使用して画像を表示
+              if (imageUrl != null)
+                Image.network(
+                  imageUrl!,
                   width: 100,
                   height: 100,
                   fit: BoxFit.cover,
                 )
               else
                 const Icon(Icons.account_circle, size: 100),
-
               const SizedBox(height: 16),
-
-// 写真選択ボタン
               ElevatedButton(
                 onPressed: _pickImage,
                 child: const Text('写真を選択'),
@@ -235,7 +233,7 @@ class _ElsePageState extends State<ElsePage> {
               const SizedBox(height: 20),
               ElevatedButton(
                 onPressed: () async {
-                  await _saveProfile();
+                  await _saveProfile();  // プロフィール保存処理
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(content: Text('保存しました')),
                   );
@@ -249,6 +247,3 @@ class _ElsePageState extends State<ElsePage> {
     );
   }
 }
-
-
-
