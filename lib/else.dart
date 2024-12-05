@@ -162,7 +162,7 @@ class _ElsePageState extends State<ElsePage> {
         child: SingleChildScrollView(
           child: Column(
             children: [
-              // Firestoreから取得した画像URLを使用して画像を表示
+              // Firestoreから取得した画像URLを使用して画像を表
               if (imageUrl != null)
                 Image.network(
                   imageUrl!,
