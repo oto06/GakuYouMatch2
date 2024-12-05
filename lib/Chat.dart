@@ -5,6 +5,7 @@ import 'dart:convert';
 import 'dart:math';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 import 'package:flutter_chat_ui/flutter_chat_ui.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class ChatScene extends StatefulWidget {
   final String roomId;
@@ -16,7 +17,22 @@ class ChatScene extends StatefulWidget {
 }
 
 class ChatRoomState extends State<ChatScene> {
-  final _user = const types.User(id: '82091008-a484-4a89-ae75-a22bf8d6f3ac'); // 自分のユーザーID
+  late types.User _user; // ログインユーザー情報を保持
+
+  @override
+  void initState() {
+    super.initState();
+
+    // ログイン中のユーザー情報を取得
+    final currentUser = FirebaseAuth.instance.currentUser;
+
+    if (currentUser != null) {
+      _user = types.User(id: currentUser.uid); // Firebase Authenticationのuidを使用
+    } else {
+      // ログインしていない場合のエラー処理
+      throw Exception("ユーザーがログインしていません");
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
