@@ -82,6 +82,8 @@ class _ElsePageState extends State<ElsePage> {
     String? uploadedImageUrl;
     if (_selectedImage != null) {
       uploadedImageUrl = await _uploadImage(_selectedImage!);
+    } else {
+      uploadedImageUrl = imageUrl; // 画像が選ばれていない場合は、以前のURLを使う
     }
 
     // プロフィールデータをまとめる
@@ -105,6 +107,11 @@ class _ElsePageState extends State<ElsePage> {
           .collection('Users') // 'Users'コレクションに保存
           .doc(user.uid) // 現在のユーザーIDをドキュメントIDとして使用
           .set(userData, SetOptions(merge: true)); // データをマージして保存
+
+      // 新しい画像URLを設定してUIを更新
+      setState(() {
+        imageUrl = uploadedImageUrl;
+      });
     } else {
       // ユーザーがログインしていない場合の処理
       print("ユーザーがログインしていません");
@@ -162,8 +169,15 @@ class _ElsePageState extends State<ElsePage> {
         child: SingleChildScrollView(
           child: Column(
             children: [
-              // Firestoreから取得した画像URLを使用して画像を表
-              if (imageUrl != null)
+              // Firestoreから取得した画像URLを使用して画像を表示
+              if (_selectedImage != null)
+                Image.file(
+                  _selectedImage!,
+                  width: 100,
+                  height: 100,
+                  fit: BoxFit.cover,
+                )
+              else if (imageUrl != null)
                 Image.network(
                   imageUrl!,
                   width: 100,
