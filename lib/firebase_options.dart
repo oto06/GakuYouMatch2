@@ -52,7 +52,7 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyD7k66rC2919c5A-Bfl8CFUcRLKzzNWnm0',
-    appId: '1:489857285870:android:7607c107b11132f8bf7dff',
+    appId: '1:489857285870:android:4ca232d2df1e88c3bf7dff',
     messagingSenderId: '489857285870',
     projectId: 'gakuyoumatch',
     storageBucket: 'gakuyoumatch.firebasestorage.app',

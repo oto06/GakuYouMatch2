@@ -1,50 +1,32 @@
+import 'dart:async'; // 非同期処理用
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'dart:convert';
+import 'dart:math';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 import 'package:flutter_chat_ui/flutter_chat_ui.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 
 class ChatScene extends StatefulWidget {
   final String roomId;
   final String roomName;
-
-  const ChatScene({
-    Key? key,
-    required this.roomId,
-    required this.roomName,
-  }) : super(key: key);
+  const ChatScene({Key? key, required this.roomId, required this.roomName}) : super(key: key);
 
   @override
   ChatRoomState createState() => ChatRoomState();
 }
 
 class ChatRoomState extends State<ChatScene> {
-  late types.User _user; // ログインユーザー情報を保持
-
-  @override
-  void initState() {
-    super.initState();
-
-    // ログイン中のユーザー情報を取得
-    final currentUser = FirebaseAuth.instance.currentUser;
-
-    if (currentUser != null) {
-      _user = types.User(id: currentUser.uid); // Firebase Authenticationのuidを使用
-    } else {
-      // ログインしていない場合のエラー処理
-      throw Exception("ユーザーがログインしていません");
-    }
-  }
+  final _user = const types.User(id: '82091008-a484-4a89-ae75-a22bf8d6f3ac'); // 自分のユーザーID
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.roomName),
+        title: Text(widget.roomName), // 部屋の名前をタイトルに表示
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back), // 戻るボタンのアイコン
           onPressed: () {
-            Navigator.pop(context);
+            Navigator.pop(context); // 前の画面に戻る
           },
         ),
       ),
@@ -59,31 +41,61 @@ class ChatRoomState extends State<ChatScene> {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
           }
+          // 非同期処理を解決するために Future を待つ
+          return FutureBuilder<List<types.Message>>(
+            future: _convertMessages(snapshot.data!.docs),
+            builder: (context, futureSnapshot) {
+              if (futureSnapshot.connectionState == ConnectionState.waiting) {
+                return const Center(child: CircularProgressIndicator());
+              }
 
-          if (snapshot.hasError) {
-            return const Center(child: Text("エラーが発生しました"));
-          }
+              if (futureSnapshot.hasError) {
+                return const Center(child: Text("エラーが発生しました"));
+              }
 
-          final docs = snapshot.data?.docs ?? [];
+              final messages = futureSnapshot.data ?? [];
 
-          return Chat(
-            user: _user, // ログインユーザーの情報を設定
-            messages: docs.map((doc) {
-              final data = doc.data() as Map<String, dynamic>;
-              return types.TextMessage(
-                author: types.User(id: data['authorId']), // FirestoreのauthorIdを使用
-                createdAt: data['createdAt'],
-                id: doc.id,
-                text: data['text'],
+              return Chat(
+                user: _user,
+                messages: messages,
+                onSendPressed: _handleSendPressed,
+                showUserAvatars: true,
+                showUserNames: true,
               );
-            }).toList(),
-            onSendPressed: _handleSendPressed,
-            showUserAvatars: true,
-            showUserNames: true,
+            },
           );
         },
       ),
     );
+  }
+
+  Future<List<types.Message>> _convertMessages(List<QueryDocumentSnapshot> docs) async {
+    // Firestoreのドキュメントを非同期的にTextMessageに変換
+    final List<Future<types.Message>> futures = docs.map((doc) async {
+      final data = doc.data() as Map<String, dynamic>;
+
+      // Firestoreからユーザー情報を取得
+      final authorData = await _fetchUserProfile(data['authorId']);
+
+      return types.TextMessage(
+        author: types.User(
+          id: data['authorId'],
+          firstName: authorData['nickname'] ?? 'Unknown',
+          imageUrl: authorData['imageUrl'],
+        ),
+        createdAt: data['createdAt'],
+        id: doc.id,
+        text: data['text'],
+      );
+    }).toList();
+
+    // Future のリストを解決して List<Message> に変換
+    return await Future.wait(futures);
+  }
+
+  Future<Map<String, dynamic>> _fetchUserProfile(String userId) async {
+    final doc = await FirebaseFirestore.instance.collection('Users').doc(userId).get();
+    return doc.data() ?? {};
   }
 
   void _handleSendPressed(types.PartialText message) {
@@ -93,9 +105,10 @@ class ChatRoomState extends State<ChatScene> {
         .collection('messages')
         .add({
       'text': message.text,
-      'authorId': _user.id, // ログイン中のユーザーIDを保存
+      'authorId': _user.id,
       'createdAt': DateTime.now().millisecondsSinceEpoch,
     });
   }
 }
+
 
