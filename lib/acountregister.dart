@@ -53,11 +53,13 @@ class  _AccountRegisterState extends State<AccountRegister> {
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             TextField(
               controller: _emailController,
               decoration: const InputDecoration(labelText: 'Email'), // メールフィールド
             ),
+            const SizedBox(height: 30),
             TextField(
               controller: _passwordController,
               decoration: const InputDecoration(labelText: 'Password'), // パスワードフィールド
