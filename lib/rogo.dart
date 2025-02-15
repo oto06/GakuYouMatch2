@@ -39,7 +39,7 @@ class _SplashScreenState extends State<SplashScreen> {
           opacity: _opacity,
           duration: const Duration(seconds: 4), // フェードインにかかる時間
           child: Image.asset(
-            'assets/53.png', // ロゴ画像を指定
+            'assets/GYMrogo.png', // ロゴ画像を指定
             width: 500,
             height: 500,
           ),
