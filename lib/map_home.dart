@@ -30,7 +30,48 @@ class _MapScreenState extends State<MapScreen> {
     super.dispose();
   }
 
-  // Firestoreから登録した場所のデータを取得
+  // // Firestoreから登録した場所のデータを取得
+  // Future<void> _fetchLocations() async {
+  //   FirebaseFirestore.instance.collection('Group').snapshots().listen(
+  //         (snapshot) {
+  //       setState(() {
+  //         _markers.clear();
+  //         for (var doc in snapshot.docs) {
+  //           try {
+  //             final data = doc.data();
+  //             if (data.containsKey('location') &&
+  //                 data['location'] is Map &&
+  //                 data['location']['lat'] != null &&
+  //                 data['location']['lng'] != null) {
+  //               final position = LatLng(data['location']['lat'], data['location']['lng']);
+  //               final marker = Marker(
+  //                 markerId: MarkerId(doc.id),
+  //                 position: position,
+  //                 infoWindow: InfoWindow(
+  //                   title: data['name'] ?? '未設定',
+  //                   snippet: data['eventType'],
+  //                   onTap: () {
+  //                     setState(() {
+  //                       _selectedLocation = {...data, 'id': doc.id};
+  //                     });
+  //                   },
+  //                 ),
+  //               );
+  //               _markers.add(marker);
+  //             } else {
+  //               print("Invalid location data: $data");
+  //             }
+  //           } catch (e) {
+  //             print("Error processing document ${doc.id}: $e");
+  //           }
+  //         }
+  //       });
+  //     },
+  //     onError: (error) {
+  //       print("Error fetching locations: $error");
+  //     },
+  //   );
+  // }
   Future<void> _fetchLocations() async {
     FirebaseFirestore.instance.collection('Group').snapshots().listen(
           (snapshot) {
@@ -44,9 +85,26 @@ class _MapScreenState extends State<MapScreen> {
                   data['location']['lat'] != null &&
                   data['location']['lng'] != null) {
                 final position = LatLng(data['location']['lat'], data['location']['lng']);
+                final isCurrentUserLocation = data['isCurrentUserLocation'] ?? false;
+                final isCurrentLocation = data['isCurrentLocation'] ?? false; // 参加中の場所を判定
+
+                // ピンの色を決定
+                BitmapDescriptor markerIcon;
+                if (isCurrentUserLocation) {
+                  // 自分が登録した場所（黄色）
+                  markerIcon = BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueYellow);
+                } else if (isCurrentLocation) {
+                  // 現在参加している場所（青色）
+                  markerIcon = BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueBlue);
+                } else {
+                  // デフォルトのピン（赤）
+                  markerIcon = BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed);
+                }
+
                 final marker = Marker(
                   markerId: MarkerId(doc.id),
                   position: position,
+                  icon: markerIcon,  // アイコン（ピンの色）を設定
                   infoWindow: InfoWindow(
                     title: data['name'] ?? '未設定',
                     snippet: data['eventType'],
@@ -74,7 +132,7 @@ class _MapScreenState extends State<MapScreen> {
   }
 
 
-  // 登録ボタンの動作
+
   // 登録ボタンの動作
   Future<void> _joinChatRoom() async {
     final currentUser = FirebaseAuth.instance.currentUser;
@@ -159,33 +217,65 @@ class _MapScreenState extends State<MapScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.brown[200],
       body: Column(
         children: [
           Expanded(
-            child: GoogleMap(
-              onMapCreated: (controller) {
-                mapController = controller;
-              },
-              initialCameraPosition: CameraPosition(
-                target: _initialPosition,
-                zoom: 12.0,
+            child: ClipRRect(
+              borderRadius: const BorderRadius.only(
+                bottomLeft: Radius.circular(20),
+                bottomRight: Radius.circular(20),
               ),
-              markers: _markers, // Firestoreから取得したピンを表示
+              child: GoogleMap(
+                onMapCreated: (controller) {
+                  mapController = controller;
+                },
+                initialCameraPosition: CameraPosition(
+                  target: _initialPosition,
+                  zoom: 12.0,
+                ),
+                markers: _markers, // Firestoreから取得したピンを表示
+              ),
             ),
           ),
-          if (_selectedLocation != null) // 詳細情報と参加ボタンを表示
+          if (_selectedLocation != null)
             Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('場所: ${_selectedLocation!['name']}'),
-                  Text('イベント種目: ${_selectedLocation!['eventType']}'),
-                  ElevatedButton(
-                    onPressed: _joinChatRoom,
-                    child: const Text('参加する'),
+              padding: const EdgeInsets.all(12.0),
+              child: Card(
+                color: Colors.white,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                elevation: 5,
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        '場所: ${_selectedLocation!['name']}',
+                        style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        'イベント種目: ${_selectedLocation!['eventType']}',
+                        style: TextStyle(fontSize: 16, color: Colors.brown[600]),
+                      ),
+                      const SizedBox(height: 12),
+                      SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          onPressed: _joinChatRoom,
+                          style: ElevatedButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(vertical: 12),
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                            backgroundColor: Colors.brown[700],
+                            foregroundColor: Colors.white,
+                          ),
+                          child: const Text('参加する', style: TextStyle(fontSize: 18)),
+                        ),
+                      ),
+                    ],
                   ),
-                ],
+                ),
               ),
             ),
         ],

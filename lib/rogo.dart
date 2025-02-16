@@ -25,7 +25,7 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Colors.brown[200], // 背景色を濃い青に設定 (Dark Blue)
+        backgroundColor: Colors.brown[200], //
       body:GestureDetector(
         onTap: () {
       // タップ時に次の画面に遷移
@@ -37,7 +37,7 @@ class _SplashScreenState extends State<SplashScreen> {
         child:Center(
         child: AnimatedOpacity(
           opacity: _opacity,
-          duration: const Duration(seconds: 4), // フェードインにかかる時間
+          duration: const Duration(seconds: 1), // フェードインにかかる時間
           child: Image.asset(
             'assets/GYMrogo.png', // ロゴ画像を指定
             width: 500,

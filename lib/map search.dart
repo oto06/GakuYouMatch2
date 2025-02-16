@@ -133,16 +133,25 @@ class _MapSearchState extends State<MapSearch> {
                   readOnly: true,
                 ),
               ),
-              const SizedBox(height: 16),
 
-              // 登録ボタン
+              const SizedBox(height:40),
               Center(
                 child: ElevatedButton(
-                  onPressed: _registerEvent,
-                  child: const Text('登録する'),
+                onPressed: _registerEvent,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.brown,
+                  padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+                child: const Text(
+                  '登録',
+                  style: TextStyle(color: Colors.white, fontSize: 16),
                 ),
               ),
-              const SizedBox(height: 16),
+              )
+
             ],
           ),
         ),

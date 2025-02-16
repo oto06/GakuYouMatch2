@@ -44,44 +44,92 @@ class FirstScene extends StatelessWidget {
    FirstScene({super.key});
 
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.brown[200],
-      body: Center(
-        child: Column( // Column で複数のウィジェットをまとめる
-          mainAxisAlignment: MainAxisAlignment.start, // ウィジェットを上に配置
-          crossAxisAlignment: CrossAxisAlignment.center, // 横方向に中央に配置
-          children: [
-            const SizedBox(height: 60),
-            const Text(
-              '新規登録',
-              style: TextStyle(fontSize: 40, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 30), // ボタンとテキストの間にスペースを追加
-            ElevatedButton(
-              onPressed: () {
-                // ボタンを押すと次の画面に遷移
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) =>  AccountRegister()),
-                );
-              },
-              child: const Text('Googleアカウントで登録'),
-            ),
-            const SizedBox(height: 30),
-            ElevatedButton(
-              onPressed: (){
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => LoginScreen()),
-                );
-              },
-              child: const Text("ログイン"),
-            )
-          ],
-        ),
-      ),
-    );
-  }
+   @override
+   Widget build(BuildContext context) {
+     return Scaffold(
+       body: Container(
+         decoration: const BoxDecoration(
+           gradient: LinearGradient(
+             colors: [Colors.brown, Colors.orangeAccent],
+             begin: Alignment.topLeft,
+             end: Alignment.bottomRight,
+           ),
+         ),
+         child: Center(
+           child: Padding(
+             padding: const EdgeInsets.all(20.0),
+             child: Column(
+               mainAxisAlignment: MainAxisAlignment.center,
+               children: [
+                 Container(
+                   padding: const EdgeInsets.all(20),
+                   decoration: BoxDecoration(
+                     color: Colors.white,
+                     borderRadius: BorderRadius.circular(15),
+                     boxShadow: [
+                       BoxShadow(
+                         color: Colors.black26,
+                         blurRadius: 10,
+                         spreadRadius: 2,
+                         offset: Offset(0, 5),
+                       ),
+                     ],
+                   ),
+                   child: Column(
+                     mainAxisSize: MainAxisSize.min,
+                     children: [
+                       const Text(
+                         '新規登録',
+                         style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: Colors.brown),
+                       ),
+                       const SizedBox(height: 30),
+                       ElevatedButton(
+                         onPressed: () {
+                           Navigator.push(
+                             context,
+                             MaterialPageRoute(builder: (context) => AccountRegister()),
+                           );
+                         },
+                         style: ElevatedButton.styleFrom(
+                           backgroundColor: Colors.brown,
+                           padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
+                           shape: RoundedRectangleBorder(
+                             borderRadius: BorderRadius.circular(10),
+                           ),
+                         ),
+                         child: const Text(
+                           'Googleアカウントで登録',
+                           style: TextStyle(color: Colors.white, fontSize: 16),
+                         ),
+                       ),
+                       const SizedBox(height: 20),
+                       ElevatedButton(
+                         onPressed: () {
+                           Navigator.push(
+                             context,
+                             MaterialPageRoute(builder: (context) => LoginScreen()),
+                           );
+                         },
+                         style: ElevatedButton.styleFrom(
+                           backgroundColor: Colors.orangeAccent,
+                           padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
+                           shape: RoundedRectangleBorder(
+                             borderRadius: BorderRadius.circular(10),
+                           ),
+                         ),
+                         child: const Text(
+                           'ログイン',
+                           style: TextStyle(color: Colors.white, fontSize: 16),
+                         ),
+                       ),
+                     ],
+                   ),
+                 ),
+               ],
+             ),
+           ),
+         ),
+       ),
+     );
+   }
 }
